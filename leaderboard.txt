@@ -1,0 +1,74 @@
+[
+    {
+        "username": "new_user",
+        "score": 150
+    },
+    {
+        "username": "new_userc",
+        "score": 150
+    },
+    {
+        "username": "new_userxd",
+        "score": 150
+    },
+    {
+        "username": "Unnamed",
+        "score": 0
+    },
+    {
+        "username": "niger",
+        "score": 0
+    },
+    {
+        "username": "s",
+        "score": 0
+    },
+    {
+        "username": "rrrrrrrrrrrrrr",
+        "score": 0
+    },
+    {
+        "username": "hhhhhhhhhh",
+        "score": 0
+    },
+    {
+        "username": "noggggggggggggg",
+        "score": 0
+    },
+    {
+        "username": "<h1>xd",
+        "score": 0
+    },
+    {
+        "username": "<h1>ner",
+        "score": 0
+    },
+    {
+        "username": "x#h1>xddd",
+        "score": 0
+    },
+    {
+        "username": "yoo",
+        "score": 0
+    },
+    {
+        "username": "0f",
+        "score": 0
+    },
+    {
+        "username": "rrrrrrrrrrr",
+        "score": 0
+    },
+    {
+        "username": "wk00",
+        "score": 0
+    },
+    {
+        "username": "3",
+        "score": 0
+    },
+    {
+        "username": "rdd56d56",
+        "score": 0
+    }
+]

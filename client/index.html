@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krats.io | The Online 2D Multiplayer Shooter</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="./style.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="./js/challenge.js"></script>
+    <script src="./js/menu.js"></script>
+    <script src="./js/game.js"></script>
+</head>
+
+<body>
+    <canvas class="canvas" style="display: none;"></canvas>
+
+    <div class="challenge bg-gray-900 flex items-center justify-center h-screen">
+        <div class="text-center">
+            <div class="flex justify-center mb-4">
+                <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.964 7.964 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+            </div>
+            <h1 class="challenge_text text-white text-2xl font-semibold">We are verifying if you are a human</h1>
+            <p class="text-gray-400 mt-2">Made by Kratz Anti-Bot system</p>
+        </div>
+    </div>
+
+    <div class="content relative min-h-screen flex items-center justify-center background-image"
+        style="visibility: hidden;">
+        <div class="background-overlay"></div>
+
+        <div class="relative bg-gray-800 p-8 rounded-lg shadow-lg w-96 z-10">
+            <h2 class="text-2xl font-bold mb-6 text-white text-center">Kratz.io</h2>
+
+            <div class="mb-4">
+                <label for="color" class="block text-sm font-medium text-gray-300 mb-2">Select Player Color</label>
+                <select id="color" class="bg-gray-700 text-gray-300 border border-gray-600 rounded-lg w-full py-2 px-3">
+                    <option value="default">Random</option>
+                    <option value="red">Red</option>
+                    <option value="blue">Blue</option>
+                    <option value="green">Green</option>
+                </select>
+            </div>
+
+            <div class="mb-6">
+                <label for="username" class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+                <input type="text" id="username"
+                    class="bg-gray-700 text-gray-300 border border-gray-600 rounded-lg w-full py-2 px-3"
+                    placeholder="Enter your username">
+            </div>
+
+            <button
+                class="play bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg w-full transition duration-300">Play</button>
+        </div>
+
+        <div class="leaderboard bg-gray-800 p-8 rounded-lg shadow-lg w-96 z-10 ml-4">
+            <h2 class="text-2xl font-bold mb-4 text-white text-center">Top Scores Weekly</h2>
+            <div class="leaderboard-list text-white max-h-56 overflow-y-auto">
+            </div>
+        </div>
+
+        </div>
+
+        <input type="text" maxlength="100" placeholder="Type a message" class="chatbox" style="display: none;">
+
+
+        <div class="peer_store">
+            <script>
+                const peer = io();
+                let token = ''
+            </script>
+        </div>
+</body>
+
+</html>
