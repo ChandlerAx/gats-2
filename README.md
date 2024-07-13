@@ -19,5 +19,9 @@ Contact chandl8r for suggestions
 - Clans
 - ...
 
+# Installation
+npm install <br>
+node index.js
+
 # Extra
 Source code can be updated every moment, day, week
