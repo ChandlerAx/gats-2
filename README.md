@@ -1,7 +1,7 @@
 # Gats Hard Recode
 2D shooter IO game remake of gats.io but managed source code & more features. <br>
 This source is not stable yet and may contain problems and un finished parts. <br>
-Contact chandl8r for suggestions
+Discord: https://discord.gg/fcfB4nCdjG <br>
 
 # Features
 - Basic bot protection
