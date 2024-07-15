@@ -7,6 +7,7 @@ Contact chandl8r for suggestions
 - Basic bot protection
 - Basic menu with leaderboard
 - Multiplayer over WebSockets (tcp)
+- Player movement
 
 # Recent Update
 - Color selector
