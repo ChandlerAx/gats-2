@@ -14,7 +14,7 @@ Discord: https://discord.gg/fcfB4nCdjG <br>
 - Leaderboard bugg fix
 - Small style changes
 - Config env file added
-- Player movement with accerlation technology (beta)
+- Player movement very optimized in networking with accerlation technology (beta)
 
 # Not-Finished
 - Shooting
