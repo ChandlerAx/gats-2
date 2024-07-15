@@ -6,12 +6,16 @@ Contact chandl8r for suggestions
 # Features
 - Basic bot protection
 - Basic menu with leaderboard
-- Game client engine with dynamic map
-- User chat messages in-game
-- Player with gun
+- Multiplayer over WebSockets (tcp)
+
+# Recent Update
+- Color selector
+- Leaderboard bugg fix
+- Small style changes
+- Config env file added
+- Player movement with accerlation technology (beta)
 
 # Not-Finished
-- Player movement
 - Shooting
 - in-game scoreboard, upgrades
 - Accounts

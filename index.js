@@ -8,19 +8,23 @@ const server = http.createServer(app);
 const fs = require('fs');
 const rateLimit = require('express-rate-limit');
 const io = socketIo(server);
-const limiter = rateLimit({ windowMs: 5000, max: 15, message: 'Too many requests.', });
+const limiter = rateLimit({ windowMs: 5000, max: 15, message: 'Too many requests.' });
+const dotenv = require('dotenv').config({ path: './config.env' });
 
 app.use(limiter);
 app.use(express.static(path.join(__dirname, 'client')));
 
 const server_caching = {
     last_challenge_token: "",
-}
+};
 
 const game_caching = {
     players: {},
-    leaderboard: {}
-}
+    leaderboard: {},
+    connections: {}
+};
+
+const colors = ['red', 'lightblue', 'lightgreen'];
 
 setInterval(() => {
     fs.readFile(path.join(__dirname, 'leaderboard.txt'), 'utf8', (err, data) => {
@@ -28,22 +32,22 @@ setInterval(() => {
     });
 }, 3000);
 
-
 io.on('connection', (socket) => {
+    if (Object.keys(game_caching.connections).length > process.env.max_players - 1) socket.disconnect(0);
 
-    game_caching[socket.id] = {
+    game_caching.connections[socket.id] = {
         id: socket.id,
         challenge: { token_verified: false, token: '' }
-    }
+    };
 
     socket.on('challenge_token', (data) => {
-        if (game_caching[socket.id] && data == server_caching.last_challenge_token) {
-            if (game_caching[socket.id]) game_caching[socket.id].challenge.token_verified = true;
-            game_caching[socket.id].challenge.token = data;
+        if (game_caching.connections[socket.id] && data == server_caching.last_challenge_token) {
+            if (game_caching.connections[socket.id]) game_caching.connections[socket.id].challenge.token_verified = true;
+            game_caching.connections[socket.id].challenge.token = data;
             socket.emit('verified');
 
             const leaderboard = Object.values(game_caching.leaderboard);
-            socket.emit('leaderboard_stats', leaderboard.slice(0, 200));
+            socket.emit('leaderboard_stats', leaderboard.slice(0, process.env.leaderboard_entries));
 
             UpdateChallengeToken();
         } else {
@@ -51,10 +55,22 @@ io.on('connection', (socket) => {
         }
     });
 
+    const existingPlayers = Object.values(game_caching.players).map(player => ({
+        id: player.id,
+        position: player.position,
+        username: player.username,
+        color: player.color
+    }));
+    socket.emit('currentPlayers', existingPlayers);
 
     socket.on('play', (payload) => {
-        if (game_caching[socket.id] && payload.token === game_caching[socket.id].challenge.token) {
-            if (payload.username === '') payload.username = 'Unnamed'
+        if (game_caching.connections[socket.id] && payload.token === game_caching.connections[socket.id].challenge.token) {
+            if (payload.username === '') payload.username = 'Unnamed';
+
+            if (payload.color === 'random' || !colors.includes(payload.color)) {
+                payload.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
             game_caching.players[socket.id] = {
                 id: socket.id,
                 health: 100,
@@ -62,11 +78,19 @@ io.on('connection', (socket) => {
                 username: SanitizeInput(payload.username.slice(0, 20)),
                 color: payload.color,
                 imposer: { chat: '', WriteTimeout: 0 },
-                score: 0
-            }
-            io.emit('spawn', game_caching.players[socket.id])
+                score: 0,
+                directions: { up: false, down: false, left: false, right: false }
+            };
+    
+            io.emit('spawn', game_caching.players[socket.id]);
         }
-    })
+    });
+
+    socket.on('move', (directions) => {
+        if (game_caching.players[socket.id]) {
+            game_caching.players[socket.id].directions = directions;
+        }
+    });
 
     socket.on('imposer', (payload) => {
         const player = game_caching.players[socket.id]?.imposer;
@@ -88,11 +112,9 @@ io.on('connection', (socket) => {
         }
     });
 
-
     socket.on('disconnect', () => {
-
         fs.readFile(path.join(__dirname, 'leaderboard.txt'), 'utf8', (err, data) => {
-            if (!game_caching[socket.id] || !game_caching.players[socket.id] || !game_caching.players[socket.id].username) {
+            if (!game_caching.players[socket.id] || !game_caching.players[socket.id].username) {
                 return;
             }
 
@@ -117,21 +139,19 @@ io.on('connection', (socket) => {
             }
             fs.writeFile(path.join(__dirname, 'leaderboard.txt'), JSON.stringify(leaderboard, null, 4), (err) => {
                 if (err) {
-                    Next()
+                    Next();
                     return;
                 }
-                Next()
+                Next();
             });
         });
 
         function Next() {
-            if (game_caching[socket.id]) delete game_caching[socket.id];
+            // force delete player objects
+            if (game_caching.connections[socket.id]) delete game_caching.connections[socket.id];
             if (game_caching.players[socket.id]) delete game_caching.players[socket.id];
         }
-
-
-    })
-
+    });
 });
 
 function SanitizeInput(input) {
@@ -155,6 +175,25 @@ function UpdateChallengeToken() {
     fs.writeFileSync('./client/token/token.html', `${token}`);
     server_caching.last_challenge_token = `${token}`;
 }
+
+const speed = Number(process.env.player_speed_default);
+const tick_rate = Number(process.env.tick_rate);
+setInterval(() => {
+    const CacheObject = {};
+
+    Object.values(game_caching.players).forEach(player => {
+        if (player.directions.up) player.position.y -= speed;
+        if (player.directions.down) player.position.y += speed;
+        if (player.directions.left) player.position.x -= speed;
+        if (player.directions.right) player.position.x += speed;
+
+        CacheObject[player.id] = {
+            position: player.position
+        };
+    });
+
+    io.emit('updatePlayersPositions', CacheObject);
+}, 1000 / tick_rate);
 
 
 server.listen(port, () => {
