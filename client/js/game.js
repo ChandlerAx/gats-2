@@ -16,6 +16,20 @@ $(document).ready(function () {
         };
     });
 
+    peer.on('ExistingPlayers', (map) => {
+        map.forEach(player => {
+            if (!players[player.id]) {
+                players[player.id] = {
+                    id: player.id,
+                    position: player.position,
+                    username: player.username,
+                    imposer: { chat: '' },
+                    color: player.color
+                };
+            }
+        });
+    });
+
     peer.on('imposer', (payload) => {
         if (payload.delta === 'chat') players[peer.id].imposer.chat = payload.data;
         console.log(players[peer.id].imposer.chat)

@@ -55,13 +55,13 @@ io.on('connection', (socket) => {
         }
     });
 
-    const existingPlayers = Object.values(game_caching.players).map(player => ({
+    // show all players to the new player
+    socket.emit('ExistingPlayers', Object.values(game_caching.players).map(player => ({
         id: player.id,
         position: player.position,
         username: player.username,
         color: player.color
-    }));
-    socket.emit('currentPlayers', existingPlayers);
+    })));
 
     socket.on('play', (payload) => {
         if (game_caching.connections[socket.id] && payload.token === game_caching.connections[socket.id].challenge.token) {
@@ -154,6 +154,7 @@ io.on('connection', (socket) => {
     });
 });
 
+// patch for xss
 function SanitizeInput(input) {
     for (let tag of [
         '<script>',
@@ -178,6 +179,7 @@ function UpdateChallengeToken() {
 
 const speed = Number(process.env.player_speed_default);
 const tick_rate = Number(process.env.tick_rate);
+
 setInterval(() => {
     const CacheObject = {};
 
